@@ -73,8 +73,6 @@ def main():
     st.sidebar.header("Cargar archivo de datos")
     uploaded_file = st.sidebar.file_uploader("Subir archivo CSV", type=["csv"])
     
-    
-
     if uploaded_file is None:
         st.title("Por favor, sube un archivo CSV desde la barra lateral.")
         mostrar_informacion_alumno()
