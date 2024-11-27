@@ -68,7 +68,6 @@ def calcular_metricas_producto(datos_producto):
         'variacion_unidades': variacion_anual_unidades
     }
 
-# Main
 def main():
     st.sidebar.header("Cargar archivo de datos")
     uploaded_file = st.sidebar.file_uploader("Subir archivo CSV", type=["csv"])
