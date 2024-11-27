@@ -10,7 +10,6 @@ def mostrar_informacion_alumno():
         st.markdown('**Nombre:** Ruiz Tomas Federico')
         st.markdown('**Comisión:** C9')
 
-# Estilos personalizados
 st.markdown(
     """
     <style>
@@ -35,7 +34,6 @@ st.markdown(
     unsafe_allow_html=True
 )
 
-# Cargar datos desde archivo
 @st.cache_data
 def cargar_datos(uploaded_file):
     if uploaded_file:
@@ -51,7 +49,6 @@ def cargar_datos(uploaded_file):
             st.error(f"Error al leer el archivo: {e}")
     return None
 
-# Graficar evolución de ventas
 def graficar_ventas(data, producto):
     product_data = data[data['Producto'] == producto].copy()
     product_data['Fecha'] = pd.to_datetime({'year': product_data['Año'], 'month': product_data['Mes'], 'day': 1})
@@ -70,22 +67,19 @@ def graficar_ventas(data, producto):
     ax.tick_params(axis='x', labelrotation=45, labelsize=8)
     st.pyplot(fig)
 
-# Calcular métricas por producto
 def calcular_metricas_producto(datos_producto):
-    # Precio promedio
+
     datos_producto['Precio_promedio'] = datos_producto['Ingreso_total'] / datos_producto['Unidades_vendidas']
     precio_promedio = datos_producto['Precio_promedio'].mean()
     precio_promedio_anual = datos_producto.groupby('Año')['Precio_promedio'].mean()
     variacion_precio_promedio_anual = precio_promedio_anual.pct_change().mean() * 100
 
-    # Margen
     datos_producto['Ganancia'] = datos_producto['Ingreso_total'] - datos_producto['Costo_total']
     datos_producto['Margen'] = (datos_producto['Ganancia'] / datos_producto['Ingreso_total']) * 100
     margen_promedio = datos_producto['Margen'].mean()
     margen_promedio_anual = datos_producto.groupby('Año')['Margen'].mean()
     variacion_margen_promedio_anual = margen_promedio_anual.pct_change().mean() * 100
 
-    # Unidades vendidas
     unidades_vendidas = datos_producto['Unidades_vendidas'].sum()
     unidades_por_año = datos_producto.groupby('Año')['Unidades_vendidas'].sum()
     variacion_anual_unidades = unidades_por_año.pct_change().mean() * 100
@@ -104,7 +98,6 @@ def main():
     st.sidebar.header("Cargar archivo de datos")
     uploaded_file = st.sidebar.file_uploader("Subir archivo CSV", type=["csv"])
     
-    # Mostrar información del alumno solo si no hay archivo cargado
     if uploaded_file is None:
         mostrar_informacion_alumno()
     
@@ -119,7 +112,6 @@ def main():
 
         st.markdown(f"## Datos de {selected_sucursal if selected_sucursal != 'Todas' else 'Todas las Sucursales'}")
         
-        # Mostrar los productos sin duplicarlos
         for producto in data['Producto'].unique():
             datos_producto = data[data['Producto'] == producto]
             metricas = calcular_metricas_producto(datos_producto)
