@@ -3,36 +3,11 @@ import pandas as pd
 import numpy as np
 import matplotlib.pyplot as plt
 
-# Información del alumno
 def mostrar_informacion_alumno():
     with st.container(border=True):
         st.markdown('**Legajo:** 59073')
         st.markdown('**Nombre:** Ruiz Tomas Federico')
         st.markdown('**Comisión:** C9')
-
-st.markdown(
-    """
-    <style>
-    .metric-container {
-        display: flex;
-        flex-direction: column;
-        justify-content: center; 
-        height: 50px; 
-    }
-    .stMetric {
-        font-size: 1.5rem; 
-        margin: 0; 
-    }
-    .product-header {
-        font-size: 2.5rem; 
-        font-weight: bold; 
-        margin-bottom: 10px;
-        color: #FFFFFF; 
-    }
-    </style>
-    """,
-    unsafe_allow_html=True
-)
 
 @st.cache_data
 def cargar_datos(uploaded_file):
@@ -98,9 +73,11 @@ def main():
     st.sidebar.header("Cargar archivo de datos")
     uploaded_file = st.sidebar.file_uploader("Subir archivo CSV", type=["csv"])
     
-    if uploaded_file is None:
-        mostrar_informacion_alumno()
     
+
+    if uploaded_file is None:
+        st.title("Por favor, sube un archivo CSV desde la barra lateral.")
+        mostrar_informacion_alumno()
     data = cargar_datos(uploaded_file)
 
     if data is not None:
@@ -115,23 +92,16 @@ def main():
         for producto in data['Producto'].unique():
             datos_producto = data[data['Producto'] == producto]
             metricas = calcular_metricas_producto(datos_producto)
-            
-            st.markdown(
-                f"<div class='product-header'>{producto}</div>",
-                unsafe_allow_html=True
-            )
+
             with st.container(border=True):
+                st.subheader(producto)
                 col1, col2 = st.columns([2, 5])
                 with col1:
-                    st.markdown('<div class="metric-container">', unsafe_allow_html=True)
                     st.metric("Precio Promedio", f"${metricas['precio_promedio']:,.0f}", f"{metricas['variacion_precio']:.2f}%")
                     st.metric("Margen Promedio", f"{metricas['margen_promedio']:.0f}%", f"{metricas['variacion_margen']:.2f}%")
                     st.metric("Unidades Vendidas", f"{int(metricas['unidades_vendidas']):,}", f"{metricas['variacion_unidades']:.2f}%")
-                    st.markdown('</div>', unsafe_allow_html=True)
                 with col2:
                     graficar_ventas(data, producto)
-    else:
-        st.info("Por favor, sube un archivo CSV desde la barra lateral.")
 
 if __name__ == "__main__":
     main()
